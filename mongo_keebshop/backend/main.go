@@ -2,11 +2,15 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"log"
 	"github.com/rs/cors"
+	"log"
+	"net/http"
+	"time"
 )
 
+func formatDate(t time.Time) string {
+	return t.Format(time.RFC822)
+}
 
 func main() {
 
@@ -14,8 +18,9 @@ func main() {
 
 	v1 := router.Group("/api/v1")
 	{
-		v1.GET("/test", Testhandler)
+		v1.GET("/ping", ControllerPing)
 	}
+
 	c := cors.AllowAll()
 
 	handler := c.Handler(router)
@@ -23,6 +28,7 @@ func main() {
 
 }
 
-func Testhandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"result": "Success Connection OK"})
+func ControllerPing(c *gin.Context) {
+	now := time.Now()
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "time": now.String()})
 }
